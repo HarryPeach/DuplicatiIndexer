@@ -8,6 +8,7 @@ authors = ["Harry Peach (Personal Signing Key) <harrypeach1999@gmail.com>"]
 python = "^3.9"
 ijson = "^3.1.4"
 autopep8 = "^1.5.7"
+marisa-trie = "^0.7.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

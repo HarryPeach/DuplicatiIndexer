@@ -1,29 +1,36 @@
 import gzip
 import ijson
+import marisa_trie
+import pickle
 
 
-def create_gzip_from_filelist(decoded_file: str, output_file: str):
-    """Create a gzipped index from the decoded filelist
+def save_gzipped_trie(decoded_file: str, output_file: str):
+    """Create a gzipped trie index from the decoded filelist
 
     Args:
         decoded_file (str): The decoded filelist string object
+        output_file (str): The output file path
     """
     objects = ijson.items(decoded_file, "item.path")
+    trie = marisa_trie.Trie(objects)
+    data = pickle.dumps(trie)
     with gzip.open(output_file, 'wb') as f_out:
-        for o in objects:
-            f_out.write(bytes(o + '\n', 'utf-8'))
+        f_out.write(data)
 
 
-def decode_gzipped_index(input_file: str, output_file: str):
-    """Converts a gzipped index file to a plaintext index file
+def load_gzipped_trie(file: str) -> marisa_trie.Trie:
+    """Loads a gzipped index into a marisa trie
 
     Args:
-        input_file (str): Gzipped index file
-        output_file (str): Plaintext index file
+        file (str): The path to the gzipped index
+
+    Returns:
+        marisa_trie.Trie: The trie object
     """
-    with gzip.open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
-        for o in f_in:
-            f_out.write(o.decode('utf-8'))
+    trie = marisa_trie.Trie()
+    with gzip.open(file, 'rb') as f_in:
+        trie = pickle.loads(f_in.read())
+    return trie
 
 
 def decode_filelist(file: str):
@@ -42,5 +49,8 @@ def decode_filelist(file: str):
 
 if __name__ == "__main__":
     decoded = decode_filelist("filelist.json")
-    create_gzip_from_filelist(decoded, "index.txt.gz")
-    decode_gzipped_index("index.txt.gz", "index.txt")
+    save_gzipped_trie(decoded, "index.marisa.gz")
+
+    trie = load_gzipped_trie("index.marisa.gz")
+    matches = [s for s in trie.items() if "cool" in s[0]]
+    print(matches)
