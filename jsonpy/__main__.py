@@ -1,45 +1,46 @@
 import gzip
 import ijson
-import shutil
 
 
-# def get_items():
-#     convertStreamToUtf8 = codecs.getreader('utf-8-sig')
-#     with open('filelist.json', 'r') as zipentry:
-#         with convertStreamToUtf8(zipentry) as zipentryutf8:
-#             print(zipentry.read())
-#             data = ijson.parse(zipentryutf8)
+def create_gzip_from_filelist(decoded_file: str, output_file: str):
+    """Create a gzipped index from the decoded filelist
 
-def gzip_index(file, outfile):
-    with open(file, 'rb') as f_in:
-        with gzip.open(outfile, 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
-            # f_out.writelines(f_in)
+    Args:
+        decoded_file (str): The decoded filelist string object
+    """
+    objects = ijson.items(decoded_file, "item.path")
+    with gzip.open(output_file, 'wb') as f_out:
+        for o in objects:
+            f_out.write(bytes(o + '\n', 'utf-8'))
 
 
-def create_index(file, outfile):
-    with open(file, 'r') as f:
-        objects = ijson.items(f, "item.path")
+def decode_gzipped_index(input_file: str, output_file: str):
+    """Converts a gzipped index file to a plaintext index file
 
-        with open(outfile, 'w') as index_out:
-            for o in objects:
-                index_out.write(o + '\n')
+    Args:
+        input_file (str): Gzipped index file
+        output_file (str): Plaintext index file
+    """
+    with gzip.open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
+        for o in f_in:
+            f_out.write(o.decode('utf-8'))
 
 
-def decode_utf8_bom(file: str, outfile: str):
+def decode_filelist(file: str):
     """Decode the file from UTF-8-SIG to UTF-8
 
     Args:
-        file (str): The input file
-        outfile (str): The output file
+        file (str): The input file path
+
+    Returns:
+        str: The output file as a string object
     """
     # read file as utf-8-sig
     s = open(file, mode='r', encoding='utf-8-sig').read()
-    # write file as utf-8
-    open(outfile, mode='w', encoding='utf-8').write(s)
+    return s
 
 
 if __name__ == "__main__":
-    decode_utf8_bom("filelist.json", "out.json")
-    create_index("out.json", "index.idx")
-    gzip_index("index.idx", "index.gdx")
+    decoded = decode_filelist("filelist.json")
+    create_gzip_from_filelist(decoded, "index.txt.gz")
+    decode_gzipped_index("index.txt.gz", "index.txt")
