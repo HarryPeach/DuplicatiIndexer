@@ -1,7 +1,9 @@
 import gzip
 import ijson
-import marisa_trie
 import pickle
+import click
+from jsonpy import __version__
+import marisa_trie
 
 
 def save_gzipped_trie(decoded_file: str, output_file: str):
@@ -47,10 +49,31 @@ def decode_filelist(file: str):
     return s
 
 
-if __name__ == "__main__":
-    decoded = decode_filelist("filelist.json")
-    save_gzipped_trie(decoded, "index.marisa.gz")
+@click.group()
+def cli():
+    pass
 
-    trie = load_gzipped_trie("index.marisa.gz")
-    matches = [s for s in trie.items() if "cool" in s[0]]
-    print(matches)
+
+@cli.command()
+@click.argument('input_file', type=click.Path(exists=True))
+@click.argument('output_file', type=click.Path(exists=False))
+def create(input_file, output_file):
+    decoded = decode_filelist(input_file)
+    save_gzipped_trie(decoded, output_file)
+
+
+@cli.command()
+@click.argument('input_file', type=click.Path(exists=False))
+@click.argument('search_term', type=click.STRING)
+def search():
+    click.echo("Searching!")
+
+
+if __name__ == "__main__":
+    cli()
+    # decoded = decode_filelist("filelist.json")
+    # save_gzipped_trie(decoded, "index.marisa.gz")
+
+    # trie = load_gzipped_trie("index.marisa.gz")
+    # matches = [s for s in trie.items() if "cool" in s[0]]
+    # print(matches)
