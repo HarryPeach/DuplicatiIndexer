@@ -1,0 +1,18 @@
+[{
+		"type": "Folder",
+		"path": "C:\\data\\"
+	},
+	{
+		"type": "File",
+		"path": "C:\\data\\mydoc.txt",
+		"size": 4096,
+		"hash": "qaFXpxVTuYCuibb9P41VSeVn4pIaK8o3jUpJKqI4VF4="
+	},
+	{
+		"type": "File",
+		"path": "C:\\data\\myvideo.mp4",
+		"size": 215040,
+		"hash": "4sGwVN/QuWHD+yVI10qgYa4e2F5M4zXLKBQaf1rtTCs=",
+		"blocklists": ["Uo1f4rVjNRX10HkxQxXauCrRv0wJOvStqt9gaUT0uPA="]
+	}
+]
