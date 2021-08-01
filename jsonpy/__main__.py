@@ -31,6 +31,7 @@ def load_gzipped_trie(file: str) -> marisa_trie.Trie:
         marisa_trie.Trie: The trie object
     """
     trie = marisa_trie.Trie()
+    logging.debug(f"Loading trie from file: {file}")
     with gzip.open(file, 'rb') as f_in:
         trie = pickle.loads(f_in.read())
     return trie
@@ -51,9 +52,11 @@ def decode_filelist(file: str):
 
 
 @click.group()
-def cli():
+@click.option("--verbose/--no-verbose", default=False)
+def cli(verbose):
     """Index tools for Duplicati backups"""
-    pass
+    if verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
 
 
 @cli.command()
@@ -82,8 +85,12 @@ def search(input_file, search_term):
     """
     trie = load_gzipped_trie(input_file)
     matches = [s for s in trie.items() if search_term in s[0]]
-    click.echo(matches)
+    logging.debug(f"Found {len(matches)} match(es)")
+    click.echo([x[0] for x in matches])
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO,
+                        format="[%(levelname)s] %(message)s")
+    logging.info(f"DuplicatiIndexer v{__version__}")
     cli()
