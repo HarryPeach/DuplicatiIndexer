@@ -1,4 +1,5 @@
 import ijson
+import os
 from expects import expect, equal
 from jsonpy.__main__ import decode_filelist, load_gzipped_trie, save_gzipped_trie
 
@@ -33,3 +34,9 @@ def test_trie_conversion():
     expect(trie.items()[0][0]).to(equal("C:\\data\\"))
     expect(trie.items()[1][0]).to(equal("C:\\data\\mydoc.txt"))
     expect(trie.items()[2][0]).to(equal("C:\\data\\myvideo.mp4"))
+
+    # Remove the created file afterwards
+    try:
+        os.remove(INDEX_PATH)
+    except OSError:
+        pass
