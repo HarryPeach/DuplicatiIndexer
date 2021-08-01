@@ -1,7 +1,10 @@
 import gzip
 import ijson
-import marisa_trie
 import pickle
+import click
+import logging
+from jsonpy import __version__
+import marisa_trie
 
 
 def save_gzipped_trie(decoded_file: str, output_file: str):
@@ -47,10 +50,40 @@ def decode_filelist(file: str):
     return s
 
 
-if __name__ == "__main__":
-    decoded = decode_filelist("filelist.json")
-    save_gzipped_trie(decoded, "index.marisa.gz")
+@click.group()
+def cli():
+    """Index tools for Duplicati backups"""
+    pass
 
-    trie = load_gzipped_trie("index.marisa.gz")
-    matches = [s for s in trie.items() if "cool" in s[0]]
-    print(matches)
+
+@cli.command()
+@click.argument('input_file', type=click.Path(exists=True))
+@click.argument('output_file', type=click.Path(exists=False))
+def create(input_file, output_file):
+    """Create an index from a filelist.json file
+
+    Args:\n
+        input_file (str): The path to the filelist.json file\n
+        output_file (str): The path to the created index
+    """
+    decoded = decode_filelist(input_file)
+    save_gzipped_trie(decoded, output_file)
+
+
+@cli.command()
+@click.argument('input_file', type=click.Path(exists=False))
+@click.argument('search_term', type=click.STRING)
+def search(input_file, search_term):
+    """Search for a term in a created index
+
+    Args:\n
+        input_file (str): The path to the index file\n
+        search_term (str): The term to search for
+    """
+    trie = load_gzipped_trie(input_file)
+    matches = [s for s in trie.items() if search_term in s[0]]
+    click.echo(matches)
+
+
+if __name__ == "__main__":
+    cli()
