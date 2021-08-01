@@ -2,6 +2,7 @@ import gzip
 import ijson
 import pickle
 import click
+import logging
 from jsonpy import __version__
 import marisa_trie
 
@@ -65,15 +66,11 @@ def create(input_file, output_file):
 @cli.command()
 @click.argument('input_file', type=click.Path(exists=False))
 @click.argument('search_term', type=click.STRING)
-def search():
-    click.echo("Searching!")
+def search(input_file, search_term):
+    trie = load_gzipped_trie(input_file)
+    matches = [s for s in trie.items() if search_term in s[0]]
+    click.echo(matches)
 
 
 if __name__ == "__main__":
     cli()
-    # decoded = decode_filelist("filelist.json")
-    # save_gzipped_trie(decoded, "index.marisa.gz")
-
-    # trie = load_gzipped_trie("index.marisa.gz")
-    # matches = [s for s in trie.items() if "cool" in s[0]]
-    # print(matches)
