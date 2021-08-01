@@ -6,6 +6,9 @@ import logging
 from jsonpy import __version__
 import marisa_trie
 
+DEFAULT_FILELIST_NAME = "filelist.json"  # The default name of the filelist
+DEFAULT_INDEX_NAME = "index.marisa.gz"  # The default name of the index file
+
 
 def save_gzipped_trie(decoded_file: str, output_file: str):
     """Create a gzipped trie index from the decoded filelist
@@ -60,8 +63,10 @@ def cli(verbose):
 
 
 @cli.command()
-@click.argument('input_file', type=click.Path(exists=True))
-@click.argument('output_file', type=click.Path(exists=False))
+@click.argument('input_file', type=click.Path(exists=True),
+                default=DEFAULT_FILELIST_NAME)
+@click.argument('output_file', type=click.Path(exists=False),
+                default=DEFAULT_INDEX_NAME)
 def create(input_file, output_file):
     """Create an index from a filelist.json file
 
