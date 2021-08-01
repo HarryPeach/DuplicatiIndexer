@@ -1,5 +1,6 @@
 # Project specific files
 filelist.json
+*.gz
 out/
 
 # Byte-compiled / optimized / DLL files
