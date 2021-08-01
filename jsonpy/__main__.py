@@ -52,6 +52,7 @@ def decode_filelist(file: str):
 
 @click.group()
 def cli():
+    """Index tools for Duplicati backups"""
     pass
 
 
@@ -59,6 +60,12 @@ def cli():
 @click.argument('input_file', type=click.Path(exists=True))
 @click.argument('output_file', type=click.Path(exists=False))
 def create(input_file, output_file):
+    """Create an index from a filelist.json file
+
+    Args:\n
+        input_file (str): The path to the filelist.json file\n
+        output_file (str): The path to the created index
+    """
     decoded = decode_filelist(input_file)
     save_gzipped_trie(decoded, output_file)
 
@@ -67,6 +74,12 @@ def create(input_file, output_file):
 @click.argument('input_file', type=click.Path(exists=False))
 @click.argument('search_term', type=click.STRING)
 def search(input_file, search_term):
+    """Search for a term in a created index
+
+    Args:\n
+        input_file (str): The path to the index file\n
+        search_term (str): The term to search for
+    """
     trie = load_gzipped_trie(input_file)
     matches = [s for s in trie.items() if search_term in s[0]]
     click.echo(matches)
