@@ -17,7 +17,7 @@ def save_gzipped_trie(decoded_file: str, output_file: str):
         decoded_file (str): The decoded filelist string object
         output_file (str): The output file path
     """
-    objects = ijson.items(decoded_file, "item.path")
+    objects = ijson.items(bytes(decoded_file, "utf-8"), "item.path")
     trie = marisa_trie.Trie(objects)
     data = pickle.dumps(trie)
     with gzip.open(output_file, 'wb') as f_out:
