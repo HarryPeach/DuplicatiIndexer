@@ -24,3 +24,11 @@ The program uses `ijson` to stream the massive JSON index and creates a "[MARISA
    2. If you run this command without arguments it will, by default, ingest a file called `filelist.json` and spit out `index.marisa.gz`
 5. To search an existing index
    1. Run `poetry run python -m jsonpy search [input] [search term]`
+
+## What is this licensed under?
+
+```
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+```
