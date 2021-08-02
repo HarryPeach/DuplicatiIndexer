@@ -19,4 +19,7 @@ The program uses `ijson` to stream the massive JSON index and creates a "[MARISA
 1. Install [Python 3](https://python.org) and [Poetry](https://python-poetry.org/)
 2. Run `poetry install` in the project root dir
 3. Retrieve the `filelist.json` file from the backup's `*.dlist.zip` archive
-4. `TODO: Create command line interface`
+4. To create an index:
+   1. Run `poetry run python -m jsonpy create [input] [output]`
+5. To search an existing index
+   1. Run `poetry run python -m jsonpy search [input] [search term]`
