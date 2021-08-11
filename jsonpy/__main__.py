@@ -1,79 +1,15 @@
-import gzip
-import ijson
-import pickle
 import typer
 import logging
-import marisa_trie
 from pathlib import Path
 
 from jsonpy import __version__
+from jsonpy.utilities import (
+    check_input_file, decode_filelist, save_gzipped_trie, load_gzipped_trie)
 
 DEFAULT_FILELIST_NAME = "filelist.json"  # The default name of the filelist
 DEFAULT_INDEX_NAME = "index.marisa.gz"  # The default name of the index file
 
-app = typer.Typer(help="")
-
-
-def save_gzipped_trie(decoded_file: str, output_file: str):
-    """Create a gzipped trie index from the decoded filelist
-
-    Args:
-        decoded_file (str): The decoded filelist string object
-        output_file (str): The output file path
-    """
-    objects = ijson.items(bytes(decoded_file, "utf-8"), "item.path")
-    trie = marisa_trie.Trie(objects)
-    data = pickle.dumps(trie)
-    with gzip.open(output_file, 'wb') as f_out:
-        f_out.write(data)
-
-
-def load_gzipped_trie(file: str) -> marisa_trie.Trie:
-    """Loads a gzipped index into a marisa trie
-
-    Args:
-        file (str): The path to the gzipped index
-
-    Returns:
-        marisa_trie.Trie: The trie object
-    """
-    trie = marisa_trie.Trie()
-    logging.debug(f"Loading trie from file: {file}")
-    with gzip.open(file, 'rb') as f_in:
-        trie = pickle.loads(f_in.read())
-    return trie
-
-
-def decode_filelist(file: str):
-    """Decode the file from UTF-8-SIG to UTF-8
-
-    Args:
-        file (str): The input file path
-
-    Returns:
-        str: The output file as a string object
-    """
-    # read file as utf-8-sig
-    s = open(file, mode='r', encoding='utf-8-sig').read()
-    return s
-
-
-def check_input_file(input_file: Path) -> bool:
-    """Checks that a provided input file is valid
-
-    Args:
-        input_file (Path): The input file path
-
-    Returns:
-        bool: Whether file is valid or not
-    """
-    if input_file.is_dir():
-        logging.error("The provided input file was a directory")
-        return False
-    elif not input_file.exists():
-        logging.error("The provided input file did not exist")
-        return False
-    return True
+app = typer.Typer(help="Create and search marisa-trie duplicati indexes")
 
 
 @app.callback()
