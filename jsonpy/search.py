@@ -36,10 +36,15 @@ def _show_searches(matches: list, search_term: str, color: bool) -> None:
         search_term (str): The term searched for
         color (bool): Whether ANSI color should be enabled
     """
+    if len(matches) == 0:
+        logging.info("No matches found")
+
     for item in matches:
         if color:
+            logging.debug("Printing with colors enabled")
             print(_get_color_split_string(item, search_term))
         else:
+            logging.debug("Printing with colors disabled")
             print(item)
 
 
