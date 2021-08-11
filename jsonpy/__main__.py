@@ -3,8 +3,10 @@ import ijson
 import pickle
 import typer
 import logging
-from jsonpy import __version__
 import marisa_trie
+from pathlib import Path
+
+from jsonpy import __version__
 
 DEFAULT_FILELIST_NAME = "filelist.json"  # The default name of the filelist
 DEFAULT_INDEX_NAME = "index.marisa.gz"  # The default name of the index file
@@ -63,33 +65,48 @@ def decode_filelist(file: str):
     # if verbose:
     # logging.getLogger().setLevel(logging.DEBUG)
 
+def check_input_file(input_file: Path) -> bool:
+    """Checks that a provided input file is valid
 
-# @cli.command()
-# @click.argument('input_file', type=click.Path(exists=True),
-    # default=DEFAULT_FILELIST_NAME)
-# @click.argument('output_file', type=click.Path(exists=False),
-    # default=DEFAULT_INDEX_NAME)
+    Args:
+        input_file (Path): The input file path
+
+    Returns:
+        bool: Whether file is valid or not
+    """
+    if input_file.is_dir():
+        logging.error("The provided input file was a directory")
+        return False
+    elif not input_file.exists():
+        logging.error("The provided input file did not exist")
+        return False
+    return True
+
+
 @app.command()
-def create(input_file: str = typer.Option(
+def create(input_file: Path = typer.Argument(
         default=DEFAULT_FILELIST_NAME,
         help="The path to the filelist.json file"),
-        output_file: str = typer.Option(
+        output_file: Path = typer.Argument(
         default=DEFAULT_INDEX_NAME, help="The path to the created index")):
     """Create an index from a filelist.json file
     """
+    if not check_input_file(input_file):
+        return
+
     decoded = decode_filelist(input_file)
     save_gzipped_trie(decoded, output_file)
 
 
-# @cli.command()
-# @click.argument('input_file', type=click.Path(exists=False))
-# @click.argument('search_term', type=click.STRING)
 @app.command()
 def search(
-        input_file: str = typer.Option(
+        input_file: Path = typer.Argument(
             default=DEFAULT_INDEX_NAME, help="The path to the index file"),
-        search_term: str = typer.Option(..., help="The term to search for")):
+        search_term: str = typer.Argument(..., help="The term to search for")):
     """Search for a term in a created index"""
+    if not check_input_file(input_file):
+        return
+
     trie = load_gzipped_trie(input_file)
     matches = [s for s in trie.items() if search_term in s[0]]
     logging.debug(f"Found {len(matches)} match(es)")
