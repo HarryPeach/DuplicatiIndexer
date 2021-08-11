@@ -36,9 +36,10 @@ def create(input_file: Path = typer.Argument(
 def search(
         input_file: Path = typer.Argument(
             default=DEFAULT_INDEX_NAME, help="The path to the index file"),
-        search_term: str = typer.Argument(..., help="The term to search for")):
+        search_term: str = typer.Argument(..., help="The term to search for"),
+        color: bool = typer.Option(True)) -> None:
     """Search for a term in a created index"""
-    search_index(input_file, search_term)
+    search_index(input_file, search_term, color)
 
 
 if __name__ == "__main__":
