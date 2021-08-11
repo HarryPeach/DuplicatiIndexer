@@ -94,7 +94,7 @@ def create(input_file: Path = typer.Argument(
     """Create an index from a filelist.json file
     """
     if not check_input_file(input_file):
-        return
+        raise typer.Exit(code=1)
 
     decoded = decode_filelist(input_file)
     save_gzipped_trie(decoded, output_file)
@@ -107,7 +107,7 @@ def search(
         search_term: str = typer.Argument(..., help="The term to search for")):
     """Search for a term in a created index"""
     if not check_input_file(input_file):
-        return
+        raise typer.Exit(code=1)
 
     trie = load_gzipped_trie(input_file)
     matches = [s for s in trie.items() if search_term in s[0]]

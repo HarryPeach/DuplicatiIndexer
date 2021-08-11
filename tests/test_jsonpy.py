@@ -1,7 +1,7 @@
 import ijson
 import os
 from expects import expect, equal
-from jsonpy.__main__ import decode_filelist, load_gzipped_trie, save_gzipped_trie
+from jsonpy.__main__ import decode_filelist, load_gzipped_trie, save_gzipped_trie, app
 
 
 SAMPLE_FILELIST_PATH = "./tests/resources/sample_filelist.json"
