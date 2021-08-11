@@ -2,7 +2,6 @@ from typer.testing import CliRunner
 from pathlib import Path
 from expects import expect, equal, be_true, contain
 
-import hashlib
 import os
 
 from jsonpy.__main__ import app
