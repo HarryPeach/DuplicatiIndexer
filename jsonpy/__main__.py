@@ -79,7 +79,7 @@ def check_input_file(input_file: Path) -> bool:
 @app.callback()
 def main(verbose: bool = False):
     """
-    Manage users in the awesome CLI app.
+    Handle global options
     """
     if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
@@ -119,5 +119,4 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format="[%(levelname)s] %(message)s")
     logging.info(f"DuplicatiIndexer v{__version__}")
-    app.command()(main)
     app()
