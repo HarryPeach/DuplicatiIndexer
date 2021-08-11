@@ -11,7 +11,7 @@ from jsonpy import __version__
 DEFAULT_FILELIST_NAME = "filelist.json"  # The default name of the filelist
 DEFAULT_INDEX_NAME = "index.marisa.gz"  # The default name of the index file
 
-app = typer.Typer()
+app = typer.Typer(help="")
 
 
 def save_gzipped_trie(decoded_file: str, output_file: str):
@@ -58,13 +58,6 @@ def decode_filelist(file: str):
     return s
 
 
-# @click.group()
-# @click.option("--verbose/--no-verbose", default=False)
-# def cli(verbose):
-    # """Index tools for Duplicati backups"""
-    # if verbose:
-    # logging.getLogger().setLevel(logging.DEBUG)
-
 def check_input_file(input_file: Path) -> bool:
     """Checks that a provided input file is valid
 
@@ -81,6 +74,15 @@ def check_input_file(input_file: Path) -> bool:
         logging.error("The provided input file did not exist")
         return False
     return True
+
+
+@app.callback()
+def main(verbose: bool = False):
+    """
+    Manage users in the awesome CLI app.
+    """
+    if verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
 
 
 @app.command()
@@ -117,4 +119,5 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format="[%(levelname)s] %(message)s")
     logging.info(f"DuplicatiIndexer v{__version__}")
+    app.command()(main)
     app()
