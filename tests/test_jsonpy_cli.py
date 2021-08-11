@@ -48,12 +48,12 @@ def test_search_index():
     """Tests that the cli will successfully search an index"""
     result = runner.invoke(
         app,
-        ['search', SAMPLE_INDEX_PATH, "my"])
+        ['search', SAMPLE_INDEX_PATH, "my", "--no-color"])
 
     expect(result.exit_code).to(equal(0))
     expect(
         result.output).to(
-        contain("C:\\\\data\\\\mydoc.txt", "C:\\\\data\\\\myvideo.mp4"))
+        contain("C:\\data\\mydoc.txt", "C:\\data\\myvideo.mp4"))
 
     result = runner.invoke(
         app,
@@ -62,7 +62,7 @@ def test_search_index():
     expect(result.exit_code).to(equal(0))
     expect(
         result.output).to_not(
-        contain("C:\\\\data\\\\mydoc.txt", "C:\\\\data\\\\myvideo.mp4"))
+        contain("C:\\data\\mydoc.txt", "C:\\data\\myvideo.mp4"))
 
 
 def test_search_index_err():

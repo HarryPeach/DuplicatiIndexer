@@ -1,8 +1,8 @@
 import ijson
 import os
 from expects import expect, equal
-from jsonpy.__main__ import decode_filelist, load_gzipped_trie, save_gzipped_trie
-
+from jsonpy.create import _decode_filelist, _save_gzipped_trie
+from jsonpy.search import _load_gzipped_trie
 
 SAMPLE_FILELIST_PATH = "./tests/resources/sample_filelist.json"
 INDEX_PATH = "./tests/resources/index.marisa.gz"
@@ -10,7 +10,7 @@ INDEX_PATH = "./tests/resources/index.marisa.gz"
 
 def test_decode_filelist():
     """Tests the decode_filelist function."""
-    dec_str = decode_filelist(SAMPLE_FILELIST_PATH)
+    dec_str = _decode_filelist(SAMPLE_FILELIST_PATH)
     objects = ijson.items(bytes(dec_str, 'utf-8'), "item")
 
     file_count = 0
@@ -27,9 +27,9 @@ def test_decode_filelist():
 
 def test_trie_conversion():
     """Tests that an index can be created, and then successfully read from"""
-    decoded = decode_filelist(SAMPLE_FILELIST_PATH)
-    save_gzipped_trie(decoded, INDEX_PATH)
-    trie = load_gzipped_trie(INDEX_PATH)
+    decoded = _decode_filelist(SAMPLE_FILELIST_PATH)
+    _save_gzipped_trie(decoded, INDEX_PATH)
+    trie = _load_gzipped_trie(INDEX_PATH)
 
     expect(trie.items()[0][0]).to(equal("C:\\data\\"))
     expect(trie.items()[1][0]).to(equal("C:\\data\\mydoc.txt"))
