@@ -1,8 +1,9 @@
 from typer.testing import CliRunner
 from pathlib import Path
-from expects import expect, equal, be_true, contain
+from expects import expect, equal, be_true, contain, be_none
 
 import os
+import re
 
 from jsonpy.__main__ import app
 
@@ -63,6 +64,25 @@ def test_search_index():
     expect(
         result.output).to_not(
         contain("C:\\data\\mydoc.txt", "C:\\data\\myvideo.mp4"))
+
+
+def test_search_index_color_opt():
+    """Tests that the color option successfully disables colour output"""
+    result = runner.invoke(
+        app,
+        ['search', SAMPLE_INDEX_PATH, "my"])
+
+    ansi_regex = re.compile("\\\x1b\\[\\d{2}m")
+
+    expect(ansi_regex.search(result.output)).to_not(be_none)
+
+    result = runner.invoke(
+        app,
+        ['search', SAMPLE_INDEX_PATH, "my", "--no-color"])
+
+    ansi_regex = re.compile("\\\x1b\\[\\d{2}m")
+
+    expect(ansi_regex.search(result.output)).to(be_none)
 
 
 def test_search_index_err():
