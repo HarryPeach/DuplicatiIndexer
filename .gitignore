@@ -1,6 +1,6 @@
 # Project specific files
 filelist.json
-*.dlist.zip
+/*.dlist.zip
 *.gz
 !tests/resources/sample_index.gz
 out/
