@@ -1,11 +1,14 @@
+from pathlib import Path
 import ijson
 import os
-from expects import expect, equal
+from expects import expect, equal, be_true, be_false
 from jsonpy.create import _decode_filelist, _save_gzipped_trie
 from jsonpy.search import _load_gzipped_trie
+from jsonpy.utilities import check_input_file
 
-SAMPLE_FILELIST_PATH = "./tests/resources/sample_filelist.json"
-INDEX_PATH = "./tests/resources/index.marisa.gz"
+RESOURCES_PATH = "./tests/resources"
+SAMPLE_FILELIST_PATH = f"{RESOURCES_PATH}/sample_filelist.json"
+INDEX_PATH = f"{RESOURCES_PATH}/index.marisa.gz"
 
 
 def test_decode_filelist():
@@ -23,6 +26,19 @@ def test_decode_filelist():
 
     expect(file_count).to(equal(2))
     expect(folder_count).to(equal(1))
+
+
+def test_check_input_file():
+    """Tests that the input file is valid before continuing"""
+    # Test directory
+    expect(check_input_file(Path(RESOURCES_PATH))).to(be_false)
+    # Test non-existent file
+    expect(check_input_file(Path(f"{RESOURCES_PATH}/invalid.file"))).to(be_false)
+    # Test .dlist.zip file
+    expect(check_input_file(
+        Path(f"{RESOURCES_PATH}/sample_dlist.dlist.zip"))).to(be_false)
+    # Test valid file
+    expect(check_input_file(Path(SAMPLE_FILELIST_PATH))).to(be_true)
 
 
 def test_trie_conversion():

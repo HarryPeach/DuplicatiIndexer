@@ -24,4 +24,5 @@ def check_input_file(input_file: Path) -> bool:
         logging.error(
             "You must first extract the filelist.json from the *.dlist.zip and run the"
             "program on that instead")
+        return False
     return True
