@@ -27,6 +27,9 @@ def create_index(input_file: Path, output_file: Path):
 
     decoded = _decode_filelist(input_file)
     _save_gzipped_trie(decoded, output_file)
+    logging.info(
+        f"Index successfully reduced by "
+        f"{_get_size_reduction(input_file, output_file)}%")
 
 
 def _save_gzipped_trie(decoded_file: str, output_file: str):
@@ -36,12 +39,22 @@ def _save_gzipped_trie(decoded_file: str, output_file: str):
         decoded_file (str): The decoded filelist string object
         output_file (str): The output file path
     """
+    logging.info(f"Writing index to: {output_file}")
     objects = ijson.items(bytes(decoded_file, "utf-8"), "item.path")
     trie = marisa_trie.Trie(objects)
     data = pickle.dumps(trie)
     with gzip.open(output_file, 'wb') as f_out:
         f_out.write(data)
     logging.info(f"Index written to: {output_file}")
+
+
+def _get_size_reduction(original_file: Path, smaller_file: Path) -> str:
+    """Gets the percentage decrease between two files as a formatted string"""
+    return str(
+        round(
+            100 -
+            ((smaller_file.stat().st_size / original_file.stat().st_size) * 100),
+            2))
 
 
 def _decode_filelist(file: str):
